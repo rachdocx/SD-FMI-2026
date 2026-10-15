@@ -13,6 +13,7 @@ func main() {
 		"Ana":     165,
 	}
 
+	// cum sa sortez un map ca in c++?
 	for i := range len(myMap) {
 
 		var mi int = 500
@@ -29,5 +30,4 @@ func main() {
 
 		fmt.Printf("%v: Name: %v, Age: %v\n", i, maxName, mi)
 	}
-	fmt.Println(myMap)
 }
