@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	// TWO SUM LETSGOOOlang
 
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
