@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var ch = make(chan string)
+var ch = make(chan string, 2)
 
 func two_messages() {
 

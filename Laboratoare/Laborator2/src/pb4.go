@@ -23,7 +23,7 @@ func main() {
 	ok = <-notify
 
 	for ; ok != true; ok = <-notify {
-		fmt.Println(ok)
+		
 	}
 
 	fmt.Println("The go routine finally ended")
