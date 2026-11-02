@@ -8,21 +8,24 @@ import (
 type Node1 struct {
 	id         int
 	max_id     int
-	in_no      int
+	in_no      int //cum fac daca nu stiu cate noduri intra intr un nod fara deadlock, ar trebui sa foloesc o coada de mesaje nu un canal?
 	ch         chan int
 	neighbours []*Node1
 }
 
 func send1(node *Node1, _wg *sync.WaitGroup) {
 
+	//trimit id ul nodului curent la toti vecinii
 	for _, n := range node.neighbours {
 		n.ch <- node.max_id
 	}
-
 	_wg.Done()
 }
 
 func recv1(node *Node1, _wg *sync.WaitGroup) {
+
+	//cand primesc toate mesajele de la alte noduri
+	//fac maximul si nodul respectiv va considera ca ala e leaderul
 	ma := -1
 	for i := 0; i < node.in_no; i++ {
 		temp := <-node.ch
@@ -94,24 +97,41 @@ func main() {
 	var wg sync.WaitGroup
 
 	for iteration != 0 {
+
+		//pornim un thread de send din fiecare nod
 		for i := 0; i < n; i++ {
 			wg.Add(1)
 			go send1(my_topology[i], &wg)
 		}
-
+		//asteptam pana toate thread urile trimit
 		wg.Wait()
 
+		//pornim un thread de recieve de pe fieacare nod
 		for i := 0; i < n; i++ {
 			wg.Add(1)
 			go recv1(my_topology[i], &wg)
 		}
 
+		//asteptam pana cand toate thread urile isi fac logica de recieve
 		wg.Wait()
 
+		//facem acesti pasi de diametrul-grafului-ori
 		iteration -= 1
 	}
 
 	for i := 0; i < n; i++ {
 		fmt.Printf("the node %v thinks the leader is %v\n", my_topology[i].id, my_topology[i].max_id)
 	}
+	/*
+		the node 9 thinks the leader is 22
+		the node 2 thinks the leader is 22
+		the node 6 thinks the leader is 22
+		the node 14 thinks the leader is 22
+		the node 4 thinks the leader is 22
+		the node 3 thinks the leader is 22
+		the node 17 thinks the leader is 22
+		the node 8 thinks the leader is 22
+		the node 22 thinks the leader is 22
+		the node 19 thinks the leader is 22
+	*/
 }
