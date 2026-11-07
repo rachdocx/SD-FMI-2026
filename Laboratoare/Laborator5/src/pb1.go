@@ -20,6 +20,7 @@ type Robot struct {
 func send(robot *Robot, _wg *sync.WaitGroup) {
 	id := robot.id
 
+	//ne trimitem locatia la toti vecinii
 	for i := 0; i < n; i++ {
 		if my_topology[id][i] == 1 {
 			robots[i].ch <- robot.pos
@@ -39,7 +40,8 @@ func recv(robot *Robot, _wg *sync.WaitGroup) {
 	no_neigh := 0
 
 	id := robot.id
-
+	//primim locatia de la toti vecinii si
+	//ne calculam media, urm noastra locatie
 	for i := 0; i < n; i++ {
 		if my_topology[id][i] == 1 {
 			point := <-robot.ch
@@ -88,6 +90,7 @@ func main() {
 	iterations := 50
 
 	for iterations != 0 {
+		//actualizam graful
 		for i := 0; i < n; i++ {
 			for j := 0; j < n; j++ {
 				if i != j && distance(&robots[i], &robots[j], r) {
@@ -98,6 +101,7 @@ func main() {
 			}
 		}
 
+		//trimitem locatia si asteptam
 		for i := 0; i < n; i++ {
 			wg.Add(1)
 			go send(&robots[i], &wg)
@@ -105,6 +109,7 @@ func main() {
 
 		wg.Wait()
 
+		//primim locatia actualizam si asteptam
 		for i := 0; i < n; i++ {
 			wg.Add(1)
 			go recv(&robots[i], &wg)
